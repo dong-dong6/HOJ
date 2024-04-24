@@ -1,6 +1,7 @@
 package top.hcode.hoj.remoteJudge.task;
 
 import top.hcode.hoj.remoteJudge.task.Impl.*;
+import top.hcode.hoj.remoteJudge.task.Impl.acwing.AcwingJudge;
 import top.hcode.hoj.util.Constants;
 
 public class RemoteJudgeFactory {
@@ -22,6 +23,8 @@ public class RemoteJudgeFactory {
                 return new AtCoderJudge();
             case LIBRE_JUDGE:
                 return new LibreJudge();
+            case ACWING:
+                return new AcwingJudge();
             default:
                 return null;
         }

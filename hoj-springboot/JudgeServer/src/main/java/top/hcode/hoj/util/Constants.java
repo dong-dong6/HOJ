@@ -61,6 +61,7 @@ public class Constants {
 
     public enum RemoteJudge {
 
+        ACWING("Acwing"),
 
         HDU_JUDGE("HDU"),
 
