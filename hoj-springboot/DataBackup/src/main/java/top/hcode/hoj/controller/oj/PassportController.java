@@ -1,6 +1,6 @@
 package top.hcode.hoj.controller.oj;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -105,7 +105,7 @@ public class PassportController {
      * @Since 2020/10/24
      */
     @GetMapping("/logout")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> logout() {
         return passportService.logout();
     }

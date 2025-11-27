@@ -2,8 +2,8 @@ package top.hcode.hoj.controller.admin;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.common.result.CommonResult;
@@ -29,8 +29,8 @@ public class AdminUserController {
 
 
     @GetMapping("/get-user-list")
-    @RequiresAuthentication
-    @RequiresPermissions("user_admin")
+    @SaCheckLogin
+    @SaCheckPermission("user_admin")
     public CommonResult<IPage<UserRolesVO>> getUserList(@RequestParam(value = "limit", required = false) Integer limit,
                                                         @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                         @RequestParam(value = "onlyAdmin", defaultValue = "false") Boolean onlyAdmin,
@@ -39,29 +39,29 @@ public class AdminUserController {
     }
 
     @PutMapping("/edit-user")
-    @RequiresPermissions("user_admin")
-    @RequiresAuthentication
+    @SaCheckPermission("user_admin")
+    @SaCheckLogin
     public CommonResult<Void> editUser(@RequestBody AdminEditUserDTO adminEditUserDto) {
         return adminUserService.editUser(adminEditUserDto);
     }
 
     @DeleteMapping("/delete-user")
-    @RequiresPermissions("user_admin")
-    @RequiresAuthentication
+    @SaCheckPermission("user_admin")
+    @SaCheckLogin
     public CommonResult<Void> deleteUser(@RequestBody Map<String, Object> params) {
         return adminUserService.deleteUser((List<String>) params.get("ids"));
     }
 
     @PostMapping("/insert-batch-user")
-    @RequiresPermissions("user_admin")
-    @RequiresAuthentication
+    @SaCheckPermission("user_admin")
+    @SaCheckLogin
     public CommonResult<Void> insertBatchUser(@RequestBody Map<String, Object> params) {
         return adminUserService.insertBatchUser((List<List<String>>) params.get("users"));
     }
 
     @PostMapping("/generate-user")
-    @RequiresPermissions("user_admin")
-    @RequiresAuthentication
+    @SaCheckPermission("user_admin")
+    @SaCheckLogin
     public CommonResult<Map<Object, Object>> generateUser(@RequestBody Map<String, Object> params) {
         return adminUserService.generateUser(params);
     }

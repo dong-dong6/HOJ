@@ -95,10 +95,17 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>3.2.0</version>
             </dependency>
+            <!-- Sa-Token 权限认证 -->
             <dependency>
-                <groupId>org.crazycake</groupId>
-                <artifactId>shiro-redis-spring-boot-starter</artifactId>
-                <version>3.2.1</version>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-boot-starter</artifactId>
+                <version>1.37.0</version>
+            </dependency>
+            <!-- Sa-Token 整合 Redis (使用jackson序列化) -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-redis-jackson</artifactId>
+                <version>1.37.0</version>
             </dependency>
             <!--log4j日志-->
             <dependency>

@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.file;
 
 import top.hcode.hoj.common.exception.StatusForbiddenException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class TestCaseController {
 
     @PostMapping("/upload-testcase-zip")
     @ResponseBody
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Map<Object, Object>> uploadTestcaseZip(@RequestParam("file") MultipartFile file,
                                                                @RequestParam(value = "mode", defaultValue = "default") String mode,
                                                                @RequestParam(value = "gid", required = false) Long gid) {
@@ -37,7 +37,7 @@ public class TestCaseController {
 
 
     @GetMapping("/download-testcase")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void downloadTestcase(@RequestParam("pid") Long pid, HttpServletResponse response) throws StatusFailException, StatusForbiddenException {
         testCaseService.downloadTestcase(pid, response);
     }

@@ -1,11 +1,12 @@
 package top.hcode.hoj.manager.oj;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.extra.emoji.EmojiUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,9 +90,9 @@ public class CommentManager {
     public CommentListVO getComments(Long cid, Integer did, Integer limit, Integer currentPage) throws StatusForbiddenException, AccessException {
 
         // 如果有登录，则获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         if (cid == null && did != null) {
             QueryWrapper<Discussion> discussionQueryWrapper = new QueryWrapper<>();
@@ -149,11 +150,11 @@ public class CommentManager {
         commonValidator.validateContent(comment.getContent(), "评论", 10000);
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         Long cid = comment.getCid();
 
@@ -201,10 +202,10 @@ public class CommentManager {
                 .setFromName(userRolesVo.getUsername())
                 .setFromUid(userRolesVo.getUid());
 
-        if (SecurityUtils.getSubject().hasRole("root")) {
+        if (StpUtil.hasRole("root")) {
             comment.setFromRole("root");
-        } else if (SecurityUtils.getSubject().hasRole("admin")
-                || SecurityUtils.getSubject().hasRole("problem_admin")) {
+        } else if (StpUtil.hasRole("admin")
+                || StpUtil.hasRole("problem_admin")) {
             comment.setFromRole("admin");
         } else {
             comment.setFromRole("user");
@@ -258,11 +259,11 @@ public class CommentManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         Long cid = comment.getCid();
         if (cid == null) {
@@ -320,7 +321,7 @@ public class CommentManager {
     public void addCommentLike(Integer cid, Boolean toLike, Integer sourceId, String sourceType) throws StatusFailException {
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         QueryWrapper<CommentLike> commentLikeQueryWrapper = new QueryWrapper<>();
         commentLikeQueryWrapper.eq("cid", cid).eq("uid", userRolesVo.getUid());
@@ -364,8 +365,8 @@ public class CommentManager {
     public List<ReplyVO> getAllReply(Integer commentId, Long cid) throws StatusForbiddenException, StatusFailException, AccessException {
 
         // 如果有登录，则获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        AccountProfile userRolesVo = AccountUtils.getProfile();
+        boolean isRoot = StpUtil.hasRole("root");
 
         if (cid == null) {
             Comment comment = commentEntityService.getById(commentId);
@@ -399,11 +400,11 @@ public class CommentManager {
         commonValidator.validateContent(replyDto.getReply().getContent(), "回复", 10000);
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         Reply reply = replyDto.getReply();
 
@@ -459,10 +460,10 @@ public class CommentManager {
                 .setFromName(userRolesVo.getUsername())
                 .setFromUid(userRolesVo.getUid());
 
-        if (SecurityUtils.getSubject().hasRole("root")) {
+        if (StpUtil.hasRole("root")) {
             reply.setFromRole("root");
-        } else if (SecurityUtils.getSubject().hasRole("admin")
-                || SecurityUtils.getSubject().hasRole("problem_admin")) {
+        } else if (StpUtil.hasRole("admin")
+                || StpUtil.hasRole("problem_admin")) {
             reply.setFromRole("admin");
         } else {
             reply.setFromRole("user");
@@ -519,10 +520,10 @@ public class CommentManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        AccountProfile userRolesVo = AccountUtils.getProfile();
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         Long cid = comment.getCid();
         if (cid == null) {

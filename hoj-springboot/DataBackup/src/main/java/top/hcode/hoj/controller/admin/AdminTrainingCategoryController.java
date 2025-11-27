@@ -1,9 +1,9 @@
 package top.hcode.hoj.controller.admin;
 
 
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaMode;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.common.result.CommonResult;
 
@@ -26,22 +26,22 @@ public class AdminTrainingCategoryController {
     private AdminTrainingCategoryService adminTrainingCategoryService;
 
     @PostMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<TrainingCategory> addTrainingCategory(@RequestBody TrainingCategory trainingCategory) {
         return adminTrainingCategoryService.addTrainingCategory(trainingCategory);
     }
 
     @PutMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> updateTrainingCategory(@RequestBody TrainingCategory trainingCategory) {
         return adminTrainingCategoryService.updateTrainingCategory(trainingCategory);
     }
 
     @DeleteMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> deleteTrainingCategory(@RequestParam("cid") Long cid) {
         return adminTrainingCategoryService.deleteTrainingCategory(cid);
     }

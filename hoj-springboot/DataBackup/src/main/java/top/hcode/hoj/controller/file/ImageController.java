@@ -1,8 +1,8 @@
 package top.hcode.hoj.controller.file;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +30,14 @@ public class ImageController {
 
 
     @RequestMapping(value = "/upload-avatar", method = RequestMethod.POST)
-    @RequiresAuthentication
+    @SaCheckLogin
     @ResponseBody
     public CommonResult<Map<Object, Object>> uploadAvatar(@RequestParam("image") MultipartFile image) {
         return imageService.uploadAvatar(image);
     }
 
     @RequestMapping(value = "/upload-group-avatar", method = RequestMethod.POST)
-    @RequiresAuthentication
+    @SaCheckLogin
     @ResponseBody
     public CommonResult<Group> uploadGroupAvatar(@RequestParam(value = "image", required = true) MultipartFile image,
                                                  @RequestParam(value = "gid", required = true) Long gid) {
@@ -45,9 +45,9 @@ public class ImageController {
     }
 
     @RequestMapping(value = "/upload-carouse-img", method = RequestMethod.POST)
-    @RequiresAuthentication
+    @SaCheckLogin
     @ResponseBody
-    @RequiresRoles("root")
+    @SaCheckRole("root")
     public CommonResult<Map<Object, Object>> uploadCarouselImg(@RequestParam("file") MultipartFile image) {
         return imageService.uploadCarouselImg(image);
     }

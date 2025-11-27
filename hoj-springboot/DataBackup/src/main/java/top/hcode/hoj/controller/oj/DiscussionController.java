@@ -1,9 +1,9 @@
 package top.hcode.hoj.controller.oj;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.AnonApi;
@@ -53,31 +53,31 @@ public class DiscussionController {
     }
 
     @PostMapping("/discussion")
-    @RequiresPermissions("discussion_add")
-    @RequiresAuthentication
+    @SaCheckPermission("discussion_add")
+    @SaCheckLogin
     @HOJAccess({HOJAccessEnum.PUBLIC_DISCUSSION})
     public CommonResult<Void> addDiscussion(@RequestBody Discussion discussion) {
         return discussionService.addDiscussion(discussion);
     }
 
     @PutMapping("/discussion")
-    @RequiresPermissions("discussion_edit")
-    @RequiresAuthentication
+    @SaCheckPermission("discussion_edit")
+    @SaCheckLogin
     @HOJAccess({HOJAccessEnum.PUBLIC_DISCUSSION})
     public CommonResult<Void> updateDiscussion(@RequestBody Discussion discussion) {
         return discussionService.updateDiscussion(discussion);
     }
 
     @DeleteMapping("/discussion")
-    @RequiresPermissions("discussion_del")
-    @RequiresAuthentication
+    @SaCheckPermission("discussion_del")
+    @SaCheckLogin
     @HOJAccess({HOJAccessEnum.PUBLIC_DISCUSSION})
     public CommonResult<Void> removeDiscussion(@RequestParam("did") Integer did) {
         return discussionService.removeDiscussion(did);
     }
 
     @GetMapping("/discussion-like")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> addDiscussionLike(@RequestParam("did") Integer did,
                                                 @RequestParam("toLike") Boolean toLike) {
         return discussionService.addDiscussionLike(did, toLike);
@@ -90,15 +90,15 @@ public class DiscussionController {
     }
 
     @PostMapping("/discussion-category")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public CommonResult<List<Category>> upsertDiscussionCategory(@RequestBody List<Category> categoryList) {
         return discussionService.upsertDiscussionCategory(categoryList);
     }
 
 
     @PostMapping("/discussion-report")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> addDiscussionReport(@RequestBody DiscussionReport discussionReport) {
         return discussionService.addDiscussionReport(discussionReport);
     }

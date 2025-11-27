@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.msg;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +25,7 @@ public class NoticeController {
     private NoticeService noticeService;
 
     @RequestMapping(value = "/sys", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<SysMsgVO>> getSysNotice(@RequestParam(value = "limit", required = false) Integer limit,
                                                       @RequestParam(value = "currentPage", required = false) Integer currentPage) {
 
@@ -34,7 +34,7 @@ public class NoticeController {
 
 
     @RequestMapping(value = "/mine", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<SysMsgVO>> getMineNotice(@RequestParam(value = "limit", required = false) Integer limit,
                                                        @RequestParam(value = "currentPage", required = false) Integer currentPage) {
 

@@ -2,7 +2,7 @@ package top.hcode.hoj.controller.oj;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.AnonApi;
@@ -55,7 +55,7 @@ public class ContestController {
      * @Since 2020/10/28
      */
     @GetMapping("/get-contest-info")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<ContestVO> getContestInfo(@RequestParam(value = "cid", required = true) Long cid) {
 
         return contestService.getContestInfo(cid);
@@ -68,7 +68,7 @@ public class ContestController {
      * @Since 2020/10/28
      */
     @PostMapping("/register-contest")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> toRegisterContest(@RequestBody RegisterContestDTO registerContestDto) {
         return contestService.toRegisterContest(registerContestDto);
     }
@@ -79,7 +79,7 @@ public class ContestController {
      * @Return
      * @Since 2020/10/28
      */
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-contest-access")
     public CommonResult<AccessVO> getContestAccess(@RequestParam(value = "cid") Long cid) {
 
@@ -101,7 +101,7 @@ public class ContestController {
     }
 
     @GetMapping("/get-contest-problem-details")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<ProblemInfoVO> getContestProblemDetails(@RequestParam(value = "cid", required = true) Long cid,
                                                                 @RequestParam(value = "displayId", required = true) String displayId,
                                                                 @RequestParam(value = "containsEnd", defaultValue = "false") Boolean containsEnd) {
@@ -111,7 +111,7 @@ public class ContestController {
 
 
     @GetMapping("/contest-submissions")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<JudgeVO>> getContestSubmissionList(@RequestParam(value = "limit", required = false) Integer limit,
                                                                  @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                                  @RequestParam(value = "onlyMine", required = false) Boolean onlyMine,
@@ -143,7 +143,7 @@ public class ContestController {
      * @Since 2020/10/28
      */
     @PostMapping("/get-contest-rank")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage> getContestRank(@RequestBody ContestRankDTO contestRankDto) {
 
         return contestService.getContestRank(contestRankDto);
@@ -157,7 +157,7 @@ public class ContestController {
      * @Since 2020/10/28
      */
     @GetMapping("/get-contest-announcement")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<AnnouncementVO>> getContestAnnouncement(@RequestParam(value = "cid", required = true) Long cid,
                                                                       @RequestParam(value = "limit", required = false) Integer limit,
                                                                       @RequestParam(value = "currentPage", required = false) Integer currentPage) {
@@ -174,7 +174,7 @@ public class ContestController {
      * @Since 2021/7/17
      */
     @PostMapping("/get-contest-not-read-announcement")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<List<Announcement>> getContestUserNotReadAnnouncement(@RequestBody UserReadContestAnnouncementDTO userReadContestAnnouncementDto) {
         return contestService.getContestUserNotReadAnnouncement(userReadContestAnnouncementDto);
     }
@@ -188,7 +188,7 @@ public class ContestController {
      * @Since 2021/9/20
      */
     @PostMapping("/submit-print-text")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> submitPrintText(@RequestBody ContestPrintDTO contestPrintDto) {
 
         return contestService.submitPrintText(contestPrintDto);

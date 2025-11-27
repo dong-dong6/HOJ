@@ -1,7 +1,8 @@
 package top.hcode.hoj.validator;
+import cn.dev33.satoken.stp.StpUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hcode.hoj.common.exception.StatusAccessDeniedException;
@@ -43,14 +44,14 @@ public class TrainingValidator {
     }
 
     public void validateTrainingAuth(Training training) throws StatusAccessDeniedException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         validateTrainingAuth(training, userRolesVo);
     }
 
 
     public void validateTrainingAuth(Training training, AccountProfile userRolesVo) throws StatusAccessDeniedException, StatusForbiddenException {
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
+        boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
 
         if (training.getIsGroup()) {
             if (!groupValidator.isGroupMember(userRolesVo.getUid(), training.getGid()) && !isRoot) {
@@ -95,7 +96,7 @@ public class TrainingValidator {
             if (userRolesVo == null) {
                 throw new StatusAccessDeniedException("该训练属于私有题单，请先登录以校验权限！");
             }
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
+            boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
             boolean isAuthor = training.getAuthor().equals(userRolesVo.getUsername()); // 是否为该私有训练的创建者
 
 

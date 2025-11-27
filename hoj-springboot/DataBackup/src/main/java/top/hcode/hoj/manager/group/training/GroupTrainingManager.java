@@ -1,9 +1,10 @@
 package top.hcode.hoj.manager.group.training;
+import cn.dev33.satoken.stp.StpUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,9 +68,9 @@ public class GroupTrainingManager {
     private TrainingValidator trainingValidator;
 
     public IPage<TrainingVO> getTrainingList(Integer limit, Integer currentPage, Long gid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Group group = groupEntityService.getById(gid);
 
@@ -88,9 +89,9 @@ public class GroupTrainingManager {
     }
 
     public IPage<Training> getAdminTrainingList(Integer limit, Integer currentPage, Long gid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Group group = groupEntityService.getById(gid);
 
@@ -109,9 +110,9 @@ public class GroupTrainingManager {
     }
 
     public TrainingDTO getTraining(Long tid) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Training training = trainingEntityService.getById(tid);
 
@@ -158,9 +159,9 @@ public class GroupTrainingManager {
 
         trainingValidator.validateTraining(trainingDto.getTraining());
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long gid = trainingDto.getTraining().getGid();
         if (gid == null){
@@ -211,9 +212,9 @@ public class GroupTrainingManager {
 
         trainingValidator.validateTraining(trainingDto.getTraining());
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long tid = trainingDto.getTraining().getId();
 
@@ -296,9 +297,9 @@ public class GroupTrainingManager {
     }
 
     public void deleteTraining(Long tid) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Training training = trainingEntityService.getById(tid);
 
@@ -330,9 +331,9 @@ public class GroupTrainingManager {
     }
 
     public void changeTrainingStatus(Long tid, Boolean status) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Training training = trainingEntityService.getById(tid);
 

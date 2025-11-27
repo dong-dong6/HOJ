@@ -1,8 +1,8 @@
 package top.hcode.hoj.controller.admin;
 
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaMode;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,16 +29,16 @@ public class DashboardController {
 
 
     @PostMapping("/get-sessions")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root","admin","problem_admin"},logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root","admin","problem_admin"},mode = SaMode.OR)
     public CommonResult<Session> getRecentSession(){
 
         return dashboardService.getRecentSession();
     }
 
     @GetMapping("/get-dashboard-info")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root","admin","problem_admin"},logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root","admin","problem_admin"},mode = SaMode.OR)
     public CommonResult<Map<Object,Object>> getDashboardInfo(){
 
         return dashboardService.getDashboardInfo();

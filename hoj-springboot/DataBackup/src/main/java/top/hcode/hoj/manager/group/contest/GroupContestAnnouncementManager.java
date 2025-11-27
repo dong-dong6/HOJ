@@ -1,7 +1,8 @@
 package top.hcode.hoj.manager.group.contest;
+import cn.dev33.satoken.stp.StpUtil;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,9 +50,9 @@ public class GroupContestAnnouncementManager {
     private CommonValidator commonValidator;
 
     public IPage<AnnouncementVO> getContestAnnouncementList(Integer limit, Integer currentPage, Long cid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Contest contest = contestEntityService.getById(cid);
 
@@ -88,9 +89,9 @@ public class GroupContestAnnouncementManager {
         commonValidator.validateContentLength(announcementDto.getAnnouncement().getContent(), "公告", 65535);
         commonValidator.validateNotEmpty(announcementDto.getCid(), "比赛ID");
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long cid = announcementDto.getCid();
 
@@ -135,9 +136,9 @@ public class GroupContestAnnouncementManager {
         commonValidator.validateContentLength(announcementDto.getAnnouncement().getContent(), "公告", 65535);
         commonValidator.validateNotEmpty(announcementDto.getCid(), "比赛ID");
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long cid = announcementDto.getCid();
 
@@ -170,9 +171,9 @@ public class GroupContestAnnouncementManager {
     }
 
     public void deleteContestAnnouncement(Long aid, Long cid) throws StatusNotFoundException, StatusForbiddenException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Contest contest = contestEntityService.getById(cid);
 

@@ -3,9 +3,9 @@ package top.hcode.hoj.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaMode;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +48,8 @@ public class AdminContestController {
     private AdminContestAnnouncementService adminContestAnnouncementService;
 
     @GetMapping("/get-contest-list")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<IPage<Contest>> getContestList(@RequestParam(value = "limit", required = false) Integer limit,
                                                        @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                        @RequestParam(value = "keyword", required = false) String keyword) {
@@ -58,39 +58,39 @@ public class AdminContestController {
     }
 
     @GetMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<AdminContestVO> getContest(@RequestParam("cid") Long cid) {
 
         return adminContestService.getContest(cid);
     }
 
     @DeleteMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = "root") // 只有超级管理员能删除比赛
+    @SaCheckLogin
+    @SaCheckRole(value = "root") // 只有超级管理员能删除比赛
     public CommonResult<Void> deleteContest(@RequestParam("cid") Long cid) {
 
         return adminContestService.deleteContest(cid);
     }
 
     @PostMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> addContest(@RequestBody AdminContestVO adminContestVo) {
 
         return adminContestService.addContest(adminContestVo);
     }
 
     @GetMapping("/clone")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> cloneContest(@RequestParam("cid") Long cid) {
         return adminContestService.cloneContest(cid);
     }
 
     @PutMapping("")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     @Transactional(rollbackFor = Exception.class)
     public CommonResult<Void> updateContest(@RequestBody AdminContestVO adminContestVo) {
 
@@ -98,8 +98,8 @@ public class AdminContestController {
     }
 
     @PutMapping("/change-contest-visible")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> changeContestVisible(@RequestParam(value = "cid", required = true) Long cid,
                                                    @RequestParam(value = "uid", required = true) String uid,
                                                    @RequestParam(value = "visible", required = true) Boolean visible) {
@@ -112,8 +112,8 @@ public class AdminContestController {
      */
 
     @GetMapping("/get-problem-list")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     @Transactional(rollbackFor = Exception.class)
     public CommonResult<HashMap<String, Object>> getProblemList(@RequestParam(value = "limit", required = false) Integer limit,
                                                                 @RequestParam(value = "currentPage", required = false) Integer currentPage,
@@ -126,15 +126,15 @@ public class AdminContestController {
     }
 
     @GetMapping("/problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Problem> getProblem(@RequestParam("pid") Long pid, HttpServletRequest request) {
         return adminContestProblemService.getProblem(pid);
     }
 
     @DeleteMapping("/problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "problem_admin"}, mode = SaMode.OR)
     @Transactional(rollbackFor = Exception.class)
     public CommonResult<Void> deleteProblem(@RequestParam("pid") Long pid,
                                             @RequestParam(value = "cid", required = false) Long cid) {
@@ -142,8 +142,8 @@ public class AdminContestController {
     }
 
     @PostMapping("/problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     @Transactional(rollbackFor = Exception.class)
     public CommonResult<Map<Object, Object>> addProblem(@RequestBody ProblemDTO problemDto) {
 
@@ -151,8 +151,8 @@ public class AdminContestController {
     }
 
     @PutMapping("/problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     @Transactional(rollbackFor = Exception.class)
     public CommonResult<Void> updateProblem(@RequestBody ProblemDTO problemDto) {
 
@@ -160,8 +160,8 @@ public class AdminContestController {
     }
 
     @GetMapping("/contest-problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<ContestProblem> getContestProblem(@RequestParam(value = "cid", required = true) Long cid,
                                                           @RequestParam(value = "pid", required = true) Long pid) {
 
@@ -169,24 +169,24 @@ public class AdminContestController {
     }
 
     @PutMapping("/contest-problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<ContestProblem> setContestProblem(@RequestBody ContestProblem contestProblem) {
 
         return adminContestProblemService.setContestProblem(contestProblem);
     }
 
     @PostMapping("/add-problem-from-public")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> addProblemFromPublic(@RequestBody ContestProblemDTO contestProblemDto) {
 
         return adminContestProblemService.addProblemFromPublic(contestProblemDto);
     }
 
     @GetMapping("/import-remote-oj-problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     @Transactional(rollbackFor = Exception.class)
     public CommonResult<Void> importContestRemoteOJProblem(@RequestParam("name") String name,
                                                            @RequestParam("problemId") String problemId,
@@ -201,8 +201,8 @@ public class AdminContestController {
      */
 
     @GetMapping("/announcement")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<IPage<AnnouncementVO>> getAnnouncementList(@RequestParam(value = "limit", required = false) Integer limit,
                                                                    @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                                    @RequestParam(value = "cid", required = true) Long cid) {
@@ -211,24 +211,24 @@ public class AdminContestController {
     }
 
     @DeleteMapping("/announcement")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> deleteAnnouncement(@RequestParam("aid") Long aid) {
 
         return adminContestAnnouncementService.deleteAnnouncement(aid);
     }
 
     @PostMapping("/announcement")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> addAnnouncement(@RequestBody AnnouncementDTO announcementDto) {
 
         return adminContestAnnouncementService.addAnnouncement(announcementDto);
     }
 
     @PutMapping("/announcement")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @SaCheckLogin
+    @SaCheckRole(value = {"root", "admin", "problem_admin"}, mode = SaMode.OR)
     public CommonResult<Void> updateAnnouncement(@RequestBody AnnouncementDTO announcementDto) {
 
         return adminContestAnnouncementService.updateAnnouncement(announcementDto);

@@ -1,4 +1,5 @@
 package top.hcode.hoj.manager.oj;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -7,7 +8,7 @@ import cn.hutool.core.text.UnicodeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -207,7 +208,7 @@ public class HomeManager {
     public SubmissionStatisticsVO getLastWeekSubmissionStatistics(Boolean forceRefresh) {
         SubmissionStatisticsVO submissionStatisticsVO = (SubmissionStatisticsVO) redisUtils.get(SUBMISSION_STATISTICS_KEY);
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         forceRefresh = forceRefresh && isRoot;
 
         if (submissionStatisticsVO == null || forceRefresh) {

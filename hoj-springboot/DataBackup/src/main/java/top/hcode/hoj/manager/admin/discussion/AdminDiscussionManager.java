@@ -2,7 +2,7 @@ package top.hcode.hoj.manager.admin.discussion;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hcode.hoj.common.exception.StatusFailException;
@@ -42,7 +42,7 @@ public class AdminDiscussionManager {
         if (!isOk) {
             throw new StatusFailException("删除失败");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],didList:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Discussion", "Delete", didList, userRolesVo.getUid(), userRolesVo.getUsername());
     }

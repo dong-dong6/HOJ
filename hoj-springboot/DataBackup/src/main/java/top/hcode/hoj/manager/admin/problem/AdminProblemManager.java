@@ -1,4 +1,5 @@
 package top.hcode.hoj.manager.admin.problem;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -6,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -105,10 +106,10 @@ public class AdminProblemManager {
 
         if (problem != null) { // 查询成功
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
 
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+            boolean isRoot = StpUtil.hasRole("root");
+            boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
             // 只有超级管理员和题目管理员、题目创建者才能操作
             if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problem.getAuthor())) {
                 throw new StatusForbiddenException("对不起，你无权限查看题目！");
@@ -127,7 +128,7 @@ public class AdminProblemManager {
          */
         if (isOk) { // 删除成功
             FileUtil.del(Constants.File.TESTCASE_BASE_FOLDER.getPath() + File.separator + "problem_" + pid);
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             log.info("[{}],[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                     "Admin_Problem", "Delete", pid, userRolesVo.getUid(), userRolesVo.getUsername());
         } else {
@@ -158,10 +159,10 @@ public class AdminProblemManager {
         problemValidator.validateProblemUpdate(problemDto.getProblem());
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
         // 只有超级管理员和题目管理员、题目创建者才能操作
         if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problemDto.getProblem().getAuthor())) {
             throw new StatusForbiddenException("对不起，你无权限修改题目！");
@@ -232,7 +233,7 @@ public class AdminProblemManager {
             throw new StatusFailException("该题目已添加，请勿重复添加！");
         }
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         try {
             ProblemStrategy.RemoteProblemInfo otherOJProblemInfo = remoteProblemManager.getOtherOJProblemInfo(name.toUpperCase(), problemId, userRolesVo.getUsername());
             if (otherOJProblemInfo != null) {
@@ -250,15 +251,15 @@ public class AdminProblemManager {
 
     public void changeProblemAuth(Problem problem) throws StatusFailException, StatusForbiddenException {
         // 普通管理员只能将题目变成隐藏题目和比赛题目
-        boolean root = SecurityUtils.getSubject().hasRole("root");
+        boolean root = StpUtil.hasRole("root");
 
-        boolean problemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+        boolean problemAdmin = StpUtil.hasRole("problem_admin");
 
         if (!problemAdmin && !root && problem.getAuth() == 1) {
             throw new StatusForbiddenException("修改失败！你无权限公开题目！");
         }
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         UpdateWrapper<Problem> problemUpdateWrapper = new UpdateWrapper<>();
         problemUpdateWrapper.eq("id", problem.getId())

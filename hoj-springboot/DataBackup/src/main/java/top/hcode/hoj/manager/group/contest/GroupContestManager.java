@@ -1,11 +1,12 @@
 package top.hcode.hoj.manager.group.contest;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -58,9 +59,9 @@ public class GroupContestManager {
     private ContestValidator contestValidator;
 
     public IPage<ContestVO> getContestList(Integer limit, Integer currentPage, Long gid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Group group = groupEntityService.getById(gid);
 
@@ -79,9 +80,9 @@ public class GroupContestManager {
     }
 
     public IPage<Contest> getAdminContestList(Integer limit, Integer currentPage, Long gid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Group group = groupEntityService.getById(gid);
 
@@ -100,9 +101,9 @@ public class GroupContestManager {
     }
 
     public AdminContestVO getContest(Long cid) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Contest contest = contestEntityService.getById(cid);
 
@@ -158,8 +159,8 @@ public class GroupContestManager {
     public void addContest(AdminContestVO adminContestVo) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
 
         contestValidator.validateContest(adminContestVo);
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        AccountProfile userRolesVo = AccountUtils.getProfile();
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long gid = adminContestVo.getGid();
 
@@ -206,9 +207,9 @@ public class GroupContestManager {
 
         contestValidator.validateContest(adminContestVo);
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long cid = adminContestVo.getId();
 
@@ -267,9 +268,9 @@ public class GroupContestManager {
     }
 
     public void deleteContest(Long cid) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Contest contest = contestEntityService.getById(cid);
 
@@ -301,9 +302,9 @@ public class GroupContestManager {
     }
 
     public void changeContestVisible(Long cid, Boolean visible) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Contest contest = contestEntityService.getById(cid);
 

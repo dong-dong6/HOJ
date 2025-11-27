@@ -1,10 +1,11 @@
 package top.hcode.hoj.manager.oj;
+import cn.dev33.satoken.stp.StpUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +89,7 @@ public class DiscussionManager {
                                                boolean onlyMine,
                                                String keyword,
                                                boolean admin) {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         QueryWrapper<Discussion> discussionQueryWrapper = new QueryWrapper<>();
 
         IPage<Discussion> iPage = new Page<>(currentPage, limit);
@@ -107,9 +108,9 @@ public class DiscussionManager {
                     .like("description", key));
         }
 
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("root")
-                || SecurityUtils.getSubject().hasRole("problem_admin")
-                || SecurityUtils.getSubject().hasRole("admin");
+        boolean isAdmin = StpUtil.hasRole("root")
+                || StpUtil.hasRole("problem_admin")
+                || StpUtil.hasRole("admin");
 
         if (!StringUtils.isEmpty(pid)) {
             discussionQueryWrapper.eq("pid", pid);
@@ -146,9 +147,9 @@ public class DiscussionManager {
     public DiscussionVO getDiscussion(Integer did) throws StatusNotFoundException, StatusForbiddenException, AccessException {
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         String uid = null;
 
@@ -197,11 +198,11 @@ public class DiscussionManager {
         commonValidator.validateNotEmpty(discussion.getCategoryId(), "讨论分类");
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         String problemId = discussion.getPid();
         if (problemId != null) {
@@ -246,10 +247,10 @@ public class DiscussionManager {
                 .setAvatar(userRolesVo.getAvatar())
                 .setUid(userRolesVo.getUid());
 
-        if (SecurityUtils.getSubject().hasRole("root")) {
+        if (StpUtil.hasRole("root")) {
             discussion.setRole("root");
-        } else if (SecurityUtils.getSubject().hasRole("admin")
-                || SecurityUtils.getSubject().hasRole("problem_admin")) {
+        } else if (StpUtil.hasRole("admin")
+                || StpUtil.hasRole("problem_admin")) {
             discussion.setRole("admin");
         } else {
             // 如果不是管理员角色，一律重置为不置顶
@@ -281,11 +282,11 @@ public class DiscussionManager {
             throw new StatusNotFoundException("更新失败，该讨论不存在！");
         }
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         if (!isRoot
                 && !oriDiscussion.getUid().equals(userRolesVo.getUid())
@@ -320,8 +321,8 @@ public class DiscussionManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        AccountProfile userRolesVo = AccountUtils.getProfile();
+        boolean isRoot = StpUtil.hasRole("root");
 
         if (!isRoot
                 && !discussion.getUid().equals(userRolesVo.getUid())
@@ -332,9 +333,9 @@ public class DiscussionManager {
 
         UpdateWrapper<Discussion> discussionUpdateWrapper = new UpdateWrapper<Discussion>().eq("id", did);
         // 如果不是是管理员,则需要附加当前用户的uid条件
-        if (!SecurityUtils.getSubject().hasRole("root")
-                && !SecurityUtils.getSubject().hasRole("admin")
-                && !SecurityUtils.getSubject().hasRole("problem_admin")) {
+        if (!StpUtil.hasRole("root")
+                && !StpUtil.hasRole("admin")
+                && !StpUtil.hasRole("problem_admin")) {
             discussionUpdateWrapper.eq("uid", userRolesVo.getUid());
         }
         boolean isOk = discussionEntityService.remove(discussionUpdateWrapper);
@@ -347,7 +348,7 @@ public class DiscussionManager {
     @Transactional(rollbackFor = Exception.class)
     public void addDiscussionLike(Integer did, boolean toLike) throws StatusFailException, StatusForbiddenException, StatusNotFoundException {
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         Discussion discussion = discussionEntityService.getById(did);
 
@@ -356,7 +357,7 @@ public class DiscussionManager {
         }
 
         if (discussion.getGid() != null) {
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+            boolean isRoot = StpUtil.hasRole("root");
             if (!isRoot && !discussion.getUid().equals(userRolesVo.getUid())
                     && !groupValidator.isGroupMember(userRolesVo.getUid(), discussion.getGid())) {
                 throw new StatusForbiddenException("对不起，您无权限操作！");

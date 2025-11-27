@@ -3,7 +3,7 @@ package top.hcode.hoj.manager.msg;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -61,7 +61,7 @@ public class UserMessageManager {
 
     public UserUnreadMsgCountVO getUnreadMsgCount() {
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         UserUnreadMsgCountVO userUnreadMsgCount = msgRemindEntityService.getUserUnreadMsgCount(userRolesVo.getUid());
         if (userUnreadMsgCount == null) {
             userUnreadMsgCount = new UserUnreadMsgCountVO(0, 0, 0, 0, 0);
@@ -73,7 +73,7 @@ public class UserMessageManager {
     public void cleanMsg(String type, Long id) throws StatusFailException {
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         boolean isOk = cleanMsgByType(type, id, userRolesVo.getUid());
         if (!isOk) {
             throw new StatusFailException("清空失败");
@@ -87,7 +87,7 @@ public class UserMessageManager {
         if (currentPage == null || currentPage < 1) currentPage = 1;
         if (limit == null || limit < 1) limit = 5;
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         return getUserMsgList(userRolesVo.getUid(), "Discuss", limit, currentPage);
     }
@@ -100,7 +100,7 @@ public class UserMessageManager {
         if (limit == null || limit < 1) limit = 5;
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         return getUserMsgList(userRolesVo.getUid(), "Reply", limit, currentPage);
     }
@@ -113,7 +113,7 @@ public class UserMessageManager {
         if (limit == null || limit < 1) limit = 5;
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         return getUserMsgList(userRolesVo.getUid(), "Like", limit, currentPage);
     }

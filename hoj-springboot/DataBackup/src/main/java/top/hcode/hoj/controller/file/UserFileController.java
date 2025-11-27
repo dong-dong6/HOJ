@@ -1,8 +1,8 @@
 package top.hcode.hoj.controller.file;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,8 +25,8 @@ public class UserFileController {
     private UserFileService userFileService;
 
     @RequestMapping("/generate-user-excel")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public void generateUserExcel(@RequestParam("key") String key, HttpServletResponse response) throws IOException {
         userFileService.generateUserExcel(key, response);
     }

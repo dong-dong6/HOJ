@@ -1,11 +1,12 @@
 package top.hcode.hoj.manager.oj;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,7 +111,7 @@ public class JudgeManager {
         judgeValidator.validateSubmissionInfo(judgeDto);
 
         // 需要获取一下该token对应用户的数据
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         boolean isContestSubmission = judgeDto.getCid() != null && judgeDto.getCid() != 0;
         boolean isTrainingSubmission = judgeDto.getTid() != null && judgeDto.getTid() != 0;
@@ -169,7 +170,7 @@ public class JudgeManager {
             StatusFailException, StatusForbiddenException, StatusSystemErrorException {
         judgeValidator.validateTestJudgeInfo(testJudgeDto);
         // 需要获取一下该token对应用户的数据
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         String lockKey = Constants.Account.TEST_JUDGE_LOCK.getCode() + userRolesVo.getUid();
         SwitchConfig switchConfig = nacosSwitchConfig.getSwitchConfig();
@@ -247,7 +248,7 @@ public class JudgeManager {
         }
 
         // 需要获取一下该token对应用户的数据
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         if (!Objects.equals(judge.getUid(), userRolesVo.getUid())){
             throw new StatusForbiddenException("非提交该评测的用户不可操作！");
         }
@@ -329,9 +330,9 @@ public class JudgeManager {
             throw new StatusNotFoundException("此提交数据不存在！");
         }
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
+        boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
 
         // 清空vj信息
         judge.setVjudgeUsername(null);
@@ -383,7 +384,7 @@ public class JudgeManager {
             }
 
         } else {
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");// 是否为题目管理员
+            boolean isProblemAdmin = StpUtil.hasRole("problem_admin");// 是否为题目管理员
             if (!judge.getShare()
                     && !isRoot
                     && !isProblemAdmin
@@ -443,7 +444,7 @@ public class JudgeManager {
         Judge judgeInfo = judgeEntityService.getOne(judgeQueryWrapper);
 
         // 需要获取一下该token对应用户的数据
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         if (!userRolesVo.getUid().equals(judgeInfo.getUid())) { // 判断该提交是否为当前用户的
             throw new StatusForbiddenException("对不起，您不能修改他人的代码分享权限！");
@@ -482,7 +483,7 @@ public class JudgeManager {
         // 只查看当前用户的提交
         if (onlyMine) {
             // 需要获取一下该token对应用户的数据（有token便能获取到）
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
 
             if (userRolesVo == null) {
                 throw new StatusAccessDeniedException("当前用户数据为空，请您重新登陆！");
@@ -551,8 +552,8 @@ public class JudgeManager {
             return new HashMap<>();
         }
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
+        AccountProfile userRolesVo = AccountUtils.getProfile();
+        boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
 
         Contest contest = contestEntityService.getById(submitIdListDto.getCid());
 
@@ -609,17 +610,17 @@ public class JudgeManager {
             return null;
         }
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         QueryWrapper<JudgeCase> wrapper = new QueryWrapper<>();
         if (judge.getCid() == 0) { // 非比赛提交
             if (userRolesVo == null) { // 没有登录
                 wrapper.select("time", "memory", "score", "status", "user_output", "group_num", "seq", "mode");
             } else {
-                boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
+                boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
                 if (!isRoot
-                        && !SecurityUtils.getSubject().hasRole("admin")
-                        && !SecurityUtils.getSubject().hasRole("problem_admin")) { // 不是管理员
+                        && !StpUtil.hasRole("admin")
+                        && !StpUtil.hasRole("problem_admin")) { // 不是管理员
                     wrapper.select("time", "memory", "score", "status", "user_output", "group_num", "seq", "mode");
                 }
             }
@@ -627,7 +628,7 @@ public class JudgeManager {
             if (userRolesVo == null) {
                 throw new StatusForbiddenException("您还未登录！不可查看比赛提交的测试点详情！");
             }
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
+            boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
             if (!isRoot) {
                 Contest contest = contestEntityService.getById(judge.getCid());
                 // 如果不是比赛管理员 需要受到规则限制

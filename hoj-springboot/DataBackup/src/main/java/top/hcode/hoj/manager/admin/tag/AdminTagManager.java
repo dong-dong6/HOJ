@@ -2,7 +2,7 @@ package top.hcode.hoj.manager.admin.tag;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hcode.hoj.common.exception.StatusFailException;
@@ -59,7 +59,7 @@ public class AdminTagManager {
         if (!isOk) {
             throw new StatusFailException("删除失败");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],tid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Tag", "Delete", tid, userRolesVo.getUid(), userRolesVo.getUsername());
     }
@@ -103,7 +103,7 @@ public class AdminTagManager {
         if (!isOk) {
             throw new StatusFailException("删除失败");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],tcid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Tag_Classification", "Delete", tcid, userRolesVo.getUid(), userRolesVo.getUsername());
     }

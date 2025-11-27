@@ -1,5 +1,6 @@
 package top.hcode.hoj.manager.oj;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.IdUtil;
@@ -8,7 +9,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -33,9 +33,9 @@ import top.hcode.hoj.pojo.vo.RegisterCodeVO;
 import top.hcode.hoj.pojo.vo.UserInfoVO;
 import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.shiro.AccountProfile;
+import top.hcode.hoj.utils.AccountUtils;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.IpUtils;
-import top.hcode.hoj.utils.JwtUtils;
 import top.hcode.hoj.utils.RedisUtils;
 
 import javax.annotation.Resource;
@@ -54,9 +54,6 @@ public class PassportManager {
 
     @Resource
     private RedisUtils redisUtils;
-
-    @Resource
-    private JwtUtils jwtUtils;
 
     @Resource
     private NacosSwitchConfig nacosSwitchConfig;
@@ -125,8 +122,15 @@ public class PassportManager {
             throw new StatusFailException("该账户已被封禁，请联系管理员进行处理！");
         }
 
-        String jwt = jwtUtils.generateToken(userRolesVo.getUid());
-        response.setHeader("Authorization", jwt); //放到信息头部
+        // 使用 Sa-Token 登录，并将用户信息存入 Session
+        StpUtil.login(userRolesVo.getUid());
+        AccountProfile profile = new AccountProfile();
+        BeanUtil.copyProperties(userRolesVo, profile);
+        profile.setUid(userRolesVo.getUid());
+        AccountUtils.setProfile(profile);
+        
+        String token = StpUtil.getTokenValue();
+        response.setHeader("Authorization", token); //放到信息头部
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
 
         // 会话记录
@@ -329,8 +333,6 @@ public class PassportManager {
     }
 
     public void logout() {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        jwtUtils.cleanToken(userRolesVo.getUid());
-        SecurityUtils.getSubject().logout();
+        StpUtil.logout();
     }
 }

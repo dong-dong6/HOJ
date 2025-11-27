@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,7 +141,7 @@ public class AdminUserManager {
 
         if (changeUserRole) {
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             String title = "权限变更通知(Authority Change Notice)";
             String content = userRoleEntityService.getAuthChangeContent(oldType, type);
             adminNoticeManager.addSingleNoticeToUser(userRolesVo.getUid(), uid, title, content, "Sys");
@@ -154,7 +154,7 @@ public class AdminUserManager {
         if (!isOk) {
             throw new StatusFailException("删除失败！");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],uidList:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_User", "Delete", deleteUserIdList, userRolesVo.getUid(), userRolesVo.getUsername());
     }

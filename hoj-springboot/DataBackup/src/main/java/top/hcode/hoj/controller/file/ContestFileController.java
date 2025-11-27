@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.file;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +28,7 @@ public class ContestFileController {
 
 
     @GetMapping("/download-contest-rank")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void downloadContestRank(@RequestParam("cid") Long cid,
                                     @RequestParam("forceRefresh") Boolean forceRefresh,
                                     @RequestParam(value = "removeStar", defaultValue = "false") Boolean removeStar,
@@ -38,7 +38,7 @@ public class ContestFileController {
     }
 
     @GetMapping("/download-contest-ac-submission")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void downloadContestACSubmission(@RequestParam("cid") Long cid,
                                             @RequestParam(value = "excludeAdmin", defaultValue = "false") Boolean excludeAdmin,
                                             @RequestParam(value = "splitType", defaultValue = "user") String splitType,
@@ -49,7 +49,7 @@ public class ContestFileController {
 
 
     @GetMapping("/download-contest-print-text")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void downloadContestPrintText(@RequestParam("id") Long id, HttpServletResponse response) throws StatusForbiddenException {
         contestFileService.downloadContestPrintText(id, response);
     }

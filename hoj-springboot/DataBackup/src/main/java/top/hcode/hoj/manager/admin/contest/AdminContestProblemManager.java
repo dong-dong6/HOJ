@@ -1,4 +1,5 @@
 package top.hcode.hoj.manager.admin.contest;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.map.MapUtil;
@@ -7,7 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,10 +151,10 @@ public class AdminContestProblemManager {
 
         if (problem != null) { // 查询成功
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
 
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+            boolean isRoot = StpUtil.hasRole("root");
+            boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
             // 只有超级管理员和题目管理员、题目创建者才能操作
             if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problem.getAuthor())) {
                 throw new StatusForbiddenException("对不起，你无权限查看题目！");
@@ -177,7 +178,7 @@ public class AdminContestProblemManager {
             judgeEntityService.remove(judgeUpdateWrapper);
 
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
 
             log.info("[{}],[{}],cid:[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                     "Admin_Contest", "Remove_Problem", cid, pid, userRolesVo.getUid(), userRolesVo.getUsername());
@@ -189,7 +190,7 @@ public class AdminContestProblemManager {
             FileUtil.del(Constants.File.TESTCASE_BASE_FOLDER.getPath() + File.separator + "problem_" + pid);
 
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
 
             log.info("[{}],[{}],cid:[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                     "Admin_Contest", "Delete_Problem", cid, pid, userRolesVo.getUid(), userRolesVo.getUsername());
@@ -217,10 +218,10 @@ public class AdminContestProblemManager {
 
     public void updateProblem(ProblemDTO problemDto) throws StatusForbiddenException, StatusFailException {
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
         // 只有超级管理员和题目管理员、题目创建者才能操作
         if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problemDto.getProblem().getAuthor())) {
             throw new StatusForbiddenException("对不起，你无权限修改题目！");
@@ -259,7 +260,7 @@ public class AdminContestProblemManager {
         if (isOk) {
             contestProblemEntityService.syncContestRecord(contestProblem.getPid(), contestProblem.getCid(), contestProblem.getDisplayId());
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             log.info("[{}],[{}],cid:[{}],ContestProblem:[{}],operatorUid:[{}],operatorUsername:[{}]",
                     "Admin_Contest", "Update_Problem", contestProblem.getCid(), contestProblem, userRolesVo.getUid(), userRolesVo.getUsername());
             return contestProblem;
@@ -299,7 +300,7 @@ public class AdminContestProblemManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],cid:[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Contest", "Add_Public_Problem", cid, pid, userRolesVo.getUid(), userRolesVo.getUsername());
     }
@@ -311,7 +312,7 @@ public class AdminContestProblemManager {
 
         // 如果该题目不存在，需要先导入
         if (problem == null) {
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             try {
                 ProblemStrategy.RemoteProblemInfo otherOJProblemInfo = remoteProblemManager.getOtherOJProblemInfo(name.toUpperCase(), problemId, userRolesVo.getUsername());
                 if (otherOJProblemInfo != null) {
@@ -353,7 +354,7 @@ public class AdminContestProblemManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],cid:[{}],pid:[{}],problemId:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Contest", "Add_Remote_Problem", cid, problem.getId(), problem.getProblemId(),
                 userRolesVo.getUid(), userRolesVo.getUsername());

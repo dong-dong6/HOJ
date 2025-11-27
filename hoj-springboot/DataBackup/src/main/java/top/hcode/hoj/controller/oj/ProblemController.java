@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.oj;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +69,7 @@ public class ProblemController {
      * @Return CommonResult
      * @Since 2020/12/29
      */
-    @RequiresAuthentication
+    @SaCheckLogin
     @PostMapping("/get-user-problem-status")
     public CommonResult<HashMap<Long, Object>> getUserProblemStatus(@Validated @RequestBody PidListDTO pidListDto) {
         return problemService.getUserProblemStatus(pidListDto);
@@ -96,7 +96,7 @@ public class ProblemController {
      * @param cid
      * @return
      */
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-last-ac-code")
     public CommonResult<LastAcceptedCodeVO> getUserLastAcceptedCode(@RequestParam(value = "pid") Long pid,
                                                                     @RequestParam(value = "cid", required = false) Long cid) {
@@ -110,7 +110,7 @@ public class ProblemController {
      * @param cid
      * @return
      */
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-full-screen-problem-list")
     public CommonResult<List<ProblemFullScreenListVO>> getFullScreenProblemList(@RequestParam(value = "tid", required = false) Long tid,
                                                                                 @RequestParam(value = "cid", required = false) Long cid) {

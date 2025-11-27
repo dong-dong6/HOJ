@@ -1,6 +1,6 @@
 package top.hcode.hoj.controller.file;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +27,7 @@ public class MarkDownFileController {
     private MarkDownFileService markDownFileService;
 
     @RequestMapping(value = "/upload-md-img", method = RequestMethod.POST)
-    @RequiresAuthentication
+    @SaCheckLogin
     @ResponseBody
     public CommonResult<Map<Object, Object>> uploadMDImg(@RequestParam("image") MultipartFile image,
                                                          @RequestParam(value = "gid", required = false) Long gid) {
@@ -36,7 +36,7 @@ public class MarkDownFileController {
 
 
     @RequestMapping(value = "/delete-md-img", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     @ResponseBody
     public CommonResult<Void> deleteMDImg(@RequestParam("fileId") Long fileId) {
         return markDownFileService.deleteMDImg(fileId);
@@ -44,7 +44,7 @@ public class MarkDownFileController {
 
 
     @RequestMapping(value = "/upload-md-file", method = RequestMethod.POST)
-    @RequiresAuthentication
+    @SaCheckLogin
     @ResponseBody
     public CommonResult<Map<Object, Object>> uploadMd(@RequestParam("file") MultipartFile file,
                                                       @RequestParam(value = "gid", required = false) Long gid) {

@@ -1,10 +1,11 @@
 package top.hcode.hoj.manager.file;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,11 +37,11 @@ public class MarkDownFileManager {
     private GroupValidator groupValidator;
 
     public Map<Object, Object> uploadMDImg(MultipartFile image, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         if (!isRoot
                 && !isProblemAdmin
@@ -90,7 +91,7 @@ public class MarkDownFileManager {
     }
 
     public void deleteMDImg(Long fileId) throws StatusFailException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         top.hcode.hoj.pojo.entity.common.File file = fileEntityService.getById(fileId);
 
@@ -102,8 +103,8 @@ public class MarkDownFileManager {
             throw new StatusForbiddenException("错误：不支持删除！");
         }
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
 
         Long gid = file.getGid();
 
@@ -123,11 +124,11 @@ public class MarkDownFileManager {
     }
 
     public Map<Object, Object> uploadMd(MultipartFile file, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        boolean isRoot = StpUtil.hasRole("root");
+        boolean isProblemAdmin = StpUtil.hasRole("problem_admin");
+        boolean isAdmin = StpUtil.hasRole("admin");
 
         if (!isRoot && !isProblemAdmin && !isAdmin
                 && !(gid != null && groupValidator.isGroupAdmin(userRolesVo.getUid(), gid))) {

@@ -2,7 +2,7 @@ package top.hcode.hoj.manager.admin.rejudge;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -224,7 +224,7 @@ public class RejudgeManager {
         if (judge.getStatus().equals(Constants.Judge.STATUS_COMPILE_ERROR.getStatus())) {
             throw new StatusFailException("错误：编译失败的提交无法修改！");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         UpdateWrapper<Judge> judgeUpdateWrapper = new UpdateWrapper<>();
         judgeUpdateWrapper
@@ -313,7 +313,7 @@ public class RejudgeManager {
                 && !StringUtils.isEmpty(judge.getJudger()))) {
             throw new StatusFailException("错误：该提交正在评测中，无法取消，请稍后再尝试！");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         UpdateWrapper<Judge> judgeUpdateWrapper = new UpdateWrapper<>();
         judgeUpdateWrapper

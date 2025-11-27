@@ -1,7 +1,8 @@
 package top.hcode.hoj.manager.group.announcement;
+import cn.dev33.satoken.stp.StpUtil;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hcode.hoj.common.exception.StatusFailException;
@@ -41,9 +42,9 @@ public class GroupAnnouncementManager {
     private CommonValidator commonValidator;
 
     public IPage<AnnouncementVO> getAnnouncementList(Integer limit, Integer currentPage, Long gid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Group group = groupEntityService.getById(gid);
 
@@ -62,9 +63,9 @@ public class GroupAnnouncementManager {
     }
 
     public IPage<AnnouncementVO> getAdminAnnouncementList(Integer limit, Integer currentPage, Long gid) throws StatusNotFoundException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Group group = groupEntityService.getById(gid);
 
@@ -88,9 +89,9 @@ public class GroupAnnouncementManager {
         commonValidator.validateContentLength(announcement.getContent(), "公告", 65535);
         commonValidator.validateNotEmpty(announcement.getGid(), "团队ID");
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Long gid = announcement.getGid();
 
@@ -121,9 +122,9 @@ public class GroupAnnouncementManager {
         commonValidator.validateContentLength(announcement.getContent(), "公告", 65535);
         commonValidator.validateNotEmpty(announcement.getGid(), "团队ID");
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Announcement oriAnnouncement = announcementEntityService.getById(announcement.getId());
 
@@ -156,9 +157,9 @@ public class GroupAnnouncementManager {
     }
 
     public void deleteAnnouncement(Long aid) throws StatusForbiddenException, StatusNotFoundException, StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         Announcement announcement = announcementEntityService.getById(aid);
 

@@ -2,7 +2,7 @@ package top.hcode.hoj.manager.admin.announcement;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hcode.hoj.common.exception.StatusFailException;
@@ -38,7 +38,7 @@ public class AdminAnnouncementManager {
             throw new StatusFailException("删除失败");
         }
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],id:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Announcement", "Delete", aid, userRolesVo.getUid(), userRolesVo.getUsername());
     }

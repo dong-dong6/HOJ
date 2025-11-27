@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.msg;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +33,7 @@ public class UserMessageController {
      * @Since 2021/10/1
      */
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<UserUnreadMsgCountVO> getUnreadMsgCount() {
         return userMessageService.getUnreadMsgCount();
     }
@@ -47,7 +47,7 @@ public class UserMessageController {
      * @Since 2021/10/3
      */
     @RequestMapping(value = "/clean", method = RequestMethod.DELETE)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> cleanMsg(@RequestParam("type") String type,
                                        @RequestParam(value = "id", required = false) Long id) {
         return userMessageService.cleanMsg(type, id);
@@ -63,7 +63,7 @@ public class UserMessageController {
      * @Since 2021/10/1
      */
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<UserMsgVO>> getCommentMsg(@RequestParam(value = "limit", required = false) Integer limit,
                                                         @RequestParam(value = "currentPage", required = false) Integer currentPage) {
         return userMessageService.getCommentMsg(limit, currentPage);
@@ -78,7 +78,7 @@ public class UserMessageController {
      * @Since 2021/10/1
      */
     @RequestMapping(value = "/reply", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<UserMsgVO>> getReplyMsg(@RequestParam(value = "limit", required = false) Integer limit,
                                                       @RequestParam(value = "currentPage", required = false) Integer currentPage) {
         return userMessageService.getReplyMsg(limit, currentPage);
@@ -94,7 +94,7 @@ public class UserMessageController {
      * @Since 2021/10/1
      */
     @RequestMapping(value = "/like", method = RequestMethod.GET)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<UserMsgVO>> getLikeMsg(@RequestParam(value = "limit", required = false) Integer limit,
                                                      @RequestParam(value = "currentPage", required = false) Integer currentPage) {
         return userMessageService.getLikeMsg(limit, currentPage);

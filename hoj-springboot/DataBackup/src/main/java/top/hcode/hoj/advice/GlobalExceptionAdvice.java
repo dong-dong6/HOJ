@@ -1,13 +1,12 @@
 package top.hcode.hoj.advice;
 
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import com.google.protobuf.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.exceptions.PersistenceException;
-import org.apache.shiro.ShiroException;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -66,52 +65,54 @@ public class GlobalExceptionAdvice {
 
 
     /**
-     * 401 -UnAuthorized 处理AuthenticationException,token相关异常 即是认证出错 可能无法处理！
+     * 401 -UnAuthorized 处理 Sa-Token 未登录异常
+     * 没有登录（没有token），访问有@SaCheckLogin的请求路径会报这个异常
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(value = AuthenticationException.class)
-    public CommonResult<Void> handleAuthenticationException(AuthenticationException e,
-                                                            HttpServletRequest httpRequest,
-                                                            HttpServletResponse httpResponse) {
+    @ExceptionHandler(value = NotLoginException.class)
+    public CommonResult<Void> handleNotLoginException(NotLoginException e,
+                                                      HttpServletRequest httpRequest,
+                                                      HttpServletResponse httpResponse) {
         httpResponse.setHeader("Url-Type", httpRequest.getHeader("Url-Type")); // 为了前端能区别请求来源
-        return CommonResult.errorResponse(e.getMessage(), ResultStatus.ACCESS_DENIED);
+        String message;
+        if (e.getType().equals(NotLoginException.NOT_TOKEN)) {
+            message = "请您先登录！";
+        } else if (e.getType().equals(NotLoginException.INVALID_TOKEN)) {
+            message = "登录状态已失效，请重新登录！";
+        } else if (e.getType().equals(NotLoginException.TOKEN_TIMEOUT)) {
+            message = "登录已过期，请重新登录！";
+        } else if (e.getType().equals(NotLoginException.BE_REPLACED)) {
+            message = "您的账号已在其他地方登录，请重新登录！";
+        } else if (e.getType().equals(NotLoginException.KICK_OUT)) {
+            message = "您已被踢下线，请重新登录！";
+        } else {
+            message = "请您先登录！";
+        }
+        return CommonResult.errorResponse(message, ResultStatus.ACCESS_DENIED);
     }
 
     /**
-     * 401 -UnAuthorized UnauthenticatedException,token相关异常 即是认证出错 可能无法处理！
-     * 没有登录（没有token），访问有@RequiresAuthentication的请求路径会报这个异常
-     */
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(value = UnauthenticatedException.class)
-    public CommonResult<Void> handleUnauthenticatedException(UnauthenticatedException e,
-                                                             HttpServletRequest httpRequest,
-                                                             HttpServletResponse httpResponse) {
-        httpResponse.setHeader("Url-Type", httpRequest.getHeader("Url-Type")); // 为了前端能区别请求来源
-        return CommonResult.errorResponse("请您先登录！", ResultStatus.ACCESS_DENIED);
-    }
-
-    /**
-     * 403 -FORBIDDEN AuthorizationException异常 即是授权认证出错 可能无法处理！
+     * 403 -FORBIDDEN 处理 Sa-Token 角色异常
      */
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(value = AuthorizationException.class)
-    public CommonResult<String> handleAuthenticationException(AuthorizationException e,
-                                                              HttpServletRequest httpRequest,
-                                                              HttpServletResponse httpResponse) {
+    @ExceptionHandler(value = NotRoleException.class)
+    public CommonResult<Void> handleNotRoleException(NotRoleException e,
+                                                     HttpServletRequest httpRequest,
+                                                     HttpServletResponse httpResponse) {
         httpResponse.setHeader("Url-Type", httpRequest.getHeader("Url-Type")); // 为了前端能区别请求来源
         return CommonResult.errorResponse("对不起，您无权限进行此操作！", ResultStatus.FORBIDDEN);
     }
 
     /**
-     * 403 -FORBIDDEN 处理shiro的异常 无法处理！ 未能走到controller层
+     * 403 -FORBIDDEN 处理 Sa-Token 权限异常
      */
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(value = ShiroException.class)
-    public CommonResult<Void> handleShiroException(ShiroException e,
-                                                   HttpServletRequest httpRequest,
-                                                   HttpServletResponse httpResponse) {
+    @ExceptionHandler(value = NotPermissionException.class)
+    public CommonResult<Void> handleNotPermissionException(NotPermissionException e,
+                                                           HttpServletRequest httpRequest,
+                                                           HttpServletResponse httpResponse) {
         httpResponse.setHeader("Url-Type", httpRequest.getHeader("Url-Type")); // 为了前端能区别请求来源
-        return CommonResult.errorResponse("对不起，您无权限进行此操作，请先登录进行授权认证", ResultStatus.FORBIDDEN);
+        return CommonResult.errorResponse("对不起，您无权限进行此操作！", ResultStatus.FORBIDDEN);
     }
 
     /**

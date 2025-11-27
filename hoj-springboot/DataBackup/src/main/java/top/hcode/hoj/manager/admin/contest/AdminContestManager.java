@@ -1,4 +1,5 @@
 package top.hcode.hoj.manager.admin.contest;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
@@ -8,7 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -72,10 +73,10 @@ public class AdminContestManager {
             throw new StatusFailException("查询失败：该比赛不存在,请检查参数cid是否准确！");
         }
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         // 是否为超级管理员
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
 
         // 只有超级管理员和比赛拥有者才能操作
         if (!isRoot && !userRolesVo.getUid().equals(contest.getUid())) {
@@ -117,7 +118,7 @@ public class AdminContestManager {
         if (!isOk) { // 删除成功
             throw new StatusFailException("删除失败");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],cid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Contest", "Delete", cid, userRolesVo.getUid(), userRolesVo.getUsername());
     }
@@ -154,7 +155,7 @@ public class AdminContestManager {
             throw new StatusSystemErrorException("该比赛不存在，无法克隆！");
         }
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         contest.setUid(userRolesVo.getUid())
                 .setAuthor(userRolesVo.getUsername())
@@ -170,9 +171,9 @@ public class AdminContestManager {
         contestValidator.validateContest(adminContestVo);
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         // 是否为超级管理员
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         // 只有超级管理员和比赛拥有者才能操作
         if (!isRoot && !userRolesVo.getUid().equals(adminContestVo.getUid())) {
             throw new StatusForbiddenException("对不起，你无权限操作！");
@@ -209,9 +210,9 @@ public class AdminContestManager {
 
     public void changeContestVisible(Long cid, String uid, Boolean visible) throws StatusFailException, StatusForbiddenException {
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         // 是否为超级管理员
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         // 只有超级管理员和比赛拥有者才能操作
         if (!isRoot && !userRolesVo.getUid().equals(uid)) {
             throw new StatusForbiddenException("对不起，你无权限操作！");

@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.oj;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.AnonApi;
@@ -39,20 +39,20 @@ public class CommentController {
 
 
     @PostMapping("/comment")
-    @RequiresPermissions("comment_add")
-    @RequiresAuthentication
+    @SaCheckPermission("comment_add")
+    @SaCheckLogin
     public CommonResult<CommentVO> addComment(@RequestBody Comment comment) {
         return commentService.addComment(comment);
     }
 
     @DeleteMapping("/comment")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> deleteComment(@RequestBody Comment comment) {
         return commentService.deleteComment(comment);
     }
 
     @GetMapping("/comment-like")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> addCommentLike(@RequestParam("cid") Integer cid,
                                                 @RequestParam("toLike") Boolean toLike,
                                                 @RequestParam("sourceId") Integer sourceId,
@@ -68,14 +68,14 @@ public class CommentController {
     }
 
     @PostMapping("/reply")
-    @RequiresPermissions("reply_add")
-    @RequiresAuthentication
+    @SaCheckPermission("reply_add")
+    @SaCheckLogin
     public CommonResult<ReplyVO> addReply(@RequestBody ReplyDTO replyDto) {
         return commentService.addReply(replyDto);
     }
 
     @DeleteMapping("/reply")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> deleteReply(@RequestBody ReplyDTO replyDto) {
         return commentService.deleteReply(replyDto);
     }

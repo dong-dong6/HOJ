@@ -1,11 +1,12 @@
 package top.hcode.hoj.manager.file;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +79,7 @@ public class ImageManager {
         }
 
         // 获取当前登录用户
-        AccountProfile accountProfile = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile accountProfile = AccountUtils.getProfile();
 
         // 将当前用户所属的file表中avatar类型的实体的delete设置为1；
         fileEntityService.updateFileToDeleteByUidAndType(accountProfile.getUid(), "avatar");
@@ -122,9 +123,9 @@ public class ImageManager {
 
     @Transactional(rollbackFor = Exception.class)
     public Group uploadGroupAvatar(MultipartFile image, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         if (!isRoot && !groupValidator.isGroupRoot(userRolesVo.getUid(), gid)) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
@@ -196,7 +197,7 @@ public class ImageManager {
         }
 
         // 获取当前登录用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
 
         // 插入file表记录

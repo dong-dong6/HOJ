@@ -1,8 +1,9 @@
 package top.hcode.hoj.manager.admin.account;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.SecureUtil;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -19,7 +20,6 @@ import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.IpUtils;
-import top.hcode.hoj.utils.JwtUtils;
 import top.hcode.hoj.utils.RedisUtils;
 
 import javax.annotation.Resource;
@@ -39,9 +39,6 @@ public class AdminAccountManager {
 
     @Autowired
     private SessionEntityService sessionEntityService;
-
-    @Autowired
-    private JwtUtils jwtUtils;
 
     @Resource
     private RedisUtils redisUtils;
@@ -94,9 +91,15 @@ public class AdminAccountManager {
 
 
         if (rolesList.contains("admin") || rolesList.contains("root") || rolesList.contains("problem_admin")) { // 超级管理员或管理员、题目管理员
-            String jwt = jwtUtils.generateToken(userRolesVo.getUid());
+            // 使用 Sa-Token 登录，并将用户信息存入 Session
+            StpUtil.login(userRolesVo.getUid());
+            AccountProfile profile = new AccountProfile();
+            BeanUtil.copyProperties(userRolesVo, profile);
+            profile.setUid(userRolesVo.getUid());
+            AccountUtils.setProfile(profile);
 
-            response.setHeader("Authorization", jwt); //放到信息头部
+            String token = StpUtil.getTokenValue();
+            response.setHeader("Authorization", token); //放到信息头部
             response.setHeader("Access-Control-Expose-Headers", "Authorization");
             // 会话记录
             sessionEntityService.save(new Session().setUid(userRolesVo.getUid())
@@ -118,8 +121,6 @@ public class AdminAccountManager {
     }
 
     public void logout() {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        jwtUtils.cleanToken(userRolesVo.getUid());
-        SecurityUtils.getSubject().logout();
+        StpUtil.logout();
     }
 }

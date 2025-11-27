@@ -1,10 +1,11 @@
 package top.hcode.hoj.manager.oj;
+import cn.dev33.satoken.stp.StpUtil;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -130,7 +131,7 @@ public class ProblemManager {
     public HashMap<Long, Object> getUserProblemStatus(PidListDTO pidListDto) throws StatusNotFoundException {
 
         // 需要获取一下该token对应用户的数据
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         HashMap<Long, Object> result = new HashMap<>();
         // 先查询判断该用户对于这些题是否已经通过，若已通过，则无论后续再提交结果如何，该题都标记为通过
         QueryWrapper<Judge> queryWrapper = new QueryWrapper<>();
@@ -169,7 +170,7 @@ public class ProblemManager {
         boolean isSealRank = false;
         if (!isACMContest && CollectionUtil.isNotEmpty(judges)) {
             isSealRank = contestValidator.isSealRank(userRolesVo.getUid(), contest, false,
-                    SecurityUtils.getSubject().hasRole("root"));
+                    StpUtil.hasRole("root"));
         }
         for (Judge judge : judges) {
 
@@ -260,8 +261,8 @@ public class ProblemManager {
             throw new StatusForbiddenException("该题号对应题目并非公开题目，不支持访问！");
         }
 
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        boolean isRoot = StpUtil.hasRole("root");
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         if (problem.getIsGroup() && !isRoot) {
             if (gid == null) {
                 throw new StatusForbiddenException("题目为团队所属，此处不支持访问，请前往团队查看！");
@@ -325,7 +326,7 @@ public class ProblemManager {
     }
 
     public LastAcceptedCodeVO getUserLastAcceptedCode(Long pid, Long cid) {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         if (cid == null) {
             cid = 0L;
         }
@@ -353,8 +354,8 @@ public class ProblemManager {
     private String buildCode(Judge judge) {
         if (judge.getCid() == 0) {
             // 比赛外的提交代码 如果不是超管或题目管理员，需要检查网站是否开启隐藏代码功能
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");// 是否为题目管理员
+            boolean isRoot = StpUtil.hasRole("root"); // 是否为超级管理员
+            boolean isProblemAdmin = StpUtil.hasRole("problem_admin");// 是否为题目管理员
             if (!isRoot && !isProblemAdmin) {
                 try {
                     accessValidator.validateAccess(HOJAccessEnum.HIDE_NON_CONTEST_SUBMISSION_CODE);

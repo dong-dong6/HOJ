@@ -1,8 +1,8 @@
 package top.hcode.hoj.controller.file;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +32,8 @@ public class ProblemFileController {
      * @Return
      * @Since 2021/5/27
      */
-    @RequiresRoles("root")
-    @RequiresAuthentication
+    @SaCheckRole("root")
+    @SaCheckLogin
     @ResponseBody
     @PostMapping("/import-problem")
     public CommonResult<Void> importProblem(@RequestParam("file") MultipartFile file) {
@@ -50,8 +50,8 @@ public class ProblemFileController {
      * @Since 2021/5/28
      */
     @GetMapping("/export-problem")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public void exportProblem(@RequestParam("pid") List<Long> pidList, HttpServletResponse response) {
         problemFileService.exportProblem(pidList, response);
     }

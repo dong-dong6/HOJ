@@ -2,7 +2,7 @@ package top.hcode.hoj.controller.oj;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.AnonApi;
 import top.hcode.hoj.common.result.CommonResult;
@@ -57,7 +57,7 @@ public class TrainingController {
      * @Since 2021/11/20
      */
     @GetMapping("/get-training-detail")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<TrainingVO> getTraining(@RequestParam(value = "tid") Long tid) {
         return trainingService.getTraining(tid);
     }
@@ -70,7 +70,7 @@ public class TrainingController {
      * @Since 2021/11/20
      */
     @GetMapping("/get-training-problem-list")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<List<ProblemVO>> getTrainingProblemList(@RequestParam(value = "tid") Long tid) {
         return trainingService.getTrainingProblemList(tid);
     }
@@ -83,7 +83,7 @@ public class TrainingController {
      * @Since 2021/11/20
      */
     @PostMapping("/register-training")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> toRegisterTraining(@RequestBody RegisterTrainingDTO registerTrainingDto) {
         return trainingService.toRegisterTraining(registerTrainingDto);
     }
@@ -96,7 +96,7 @@ public class TrainingController {
      * @Return
      * @Since 2021/11/20
      */
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-training-access")
     public CommonResult<AccessVO> getTrainingAccess(@RequestParam(value = "tid") Long tid) {
         return trainingService.getTrainingAccess(tid);
@@ -113,7 +113,7 @@ public class TrainingController {
      * @Since 2021/11/22
      */
     @GetMapping("/get-training-rank")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<TrainingRankVO>> getTrainingRank(@RequestParam(value = "tid", required = true) Long tid,
                                                                @RequestParam(value = "limit", required = false) Integer limit,
                                                                @RequestParam(value = "currentPage", required = false) Integer currentPage,

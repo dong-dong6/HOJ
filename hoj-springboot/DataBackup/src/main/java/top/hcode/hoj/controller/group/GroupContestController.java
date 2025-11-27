@@ -13,7 +13,7 @@ import top.hcode.hoj.service.group.contest.GroupContestAnnouncementService;
 import top.hcode.hoj.service.group.contest.GroupContestProblemService;
 import top.hcode.hoj.service.group.contest.GroupContestService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,7 @@ import java.util.Map;
  * @Description:
  */
 @RestController
-@RequiresAuthentication
+@SaCheckLogin
 @RequestMapping("/api/group")
 public class GroupContestController {
 

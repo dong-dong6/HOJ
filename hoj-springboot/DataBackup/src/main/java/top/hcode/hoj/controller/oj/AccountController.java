@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.oj;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.AnonApi;
@@ -71,7 +71,7 @@ public class AccountController {
      */
 
     @PostMapping("/change-password")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<ChangeAccountVO> changePassword(@RequestBody ChangePasswordDTO changePasswordDto) {
         return accountService.changePassword(changePasswordDto);
     }
@@ -82,7 +82,7 @@ public class AccountController {
      * @return
      */
     @GetMapping("/get-change-email-code")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> getChangeEmailCode(@RequestParam("email") String email) {
         return accountService.getChangeEmailCode(email);
     }
@@ -95,19 +95,19 @@ public class AccountController {
      * @Since 2021/1/9
      */
     @PostMapping("/change-email")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<ChangeAccountVO> changeEmail(@RequestBody ChangeEmailDTO changeEmailDto) {
         return accountService.changeEmail(changeEmailDto);
     }
 
     @PostMapping("/change-userInfo")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<UserInfoVO> changeUserInfo(@RequestBody UserInfoVO userInfoVo) {
         return accountService.changeUserInfo(userInfoVo);
     }
 
     @GetMapping("/get-user-auth-info")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<UserAuthInfoVO> getUserAuthInfo() {
         return accountService.getUserAuthInfo();
     }

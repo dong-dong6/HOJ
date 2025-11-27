@@ -1,8 +1,8 @@
 package top.hcode.hoj.controller.file;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +34,8 @@ public class ImportFpsProblemController {
      * @Return
      * @Since 2021/10/06
      */
-    @RequiresRoles("root")
-    @RequiresAuthentication
+    @SaCheckRole("root")
+    @SaCheckLogin
     @ResponseBody
     @PostMapping("/import-fps-problem")
     public CommonResult<Void> importFPSProblem(@RequestParam("file") MultipartFile file) {

@@ -1,7 +1,7 @@
 package top.hcode.hoj.controller.group;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.HOJAccess;
@@ -16,7 +16,7 @@ import top.hcode.hoj.service.group.discussion.GroupDiscussionService;
  * @Description:
  */
 @RestController
-@RequiresAuthentication
+@SaCheckLogin
 @RequestMapping("/api/group")
 @HOJAccess({HOJAccessEnum.GROUP_DISCUSSION})
 public class GroupDiscussionController {

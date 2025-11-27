@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -135,7 +135,7 @@ public class AdminTrainingProblemManager {
 
         if (isOk) { // 删除成功
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             if (tid == null) {
                 FileUtil.del(Constants.File.TESTCASE_BASE_FOLDER.getPath() + File.separator + "problem_" + pid);
                 log.info("[{}],[{}],tid:[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
@@ -187,7 +187,7 @@ public class AdminTrainingProblemManager {
             trainingEntityService.update(trainingUpdateWrapper);
 
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             log.info("[{}],[{}],tid:[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                     "Admin_Training", "Add_Public_Problem", tid, pid, userRolesVo.getUid(), userRolesVo.getUsername());
 
@@ -205,7 +205,7 @@ public class AdminTrainingProblemManager {
 
         // 如果该题目不存在，需要先导入
         if (problem == null) {
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             try {
                 ProblemStrategy.RemoteProblemInfo otherOJProblemInfo = remoteProblemManager.getOtherOJProblemInfo(name.toUpperCase(), problemId, userRolesVo.getUsername());
                 if (otherOJProblemInfo != null) {
@@ -244,7 +244,7 @@ public class AdminTrainingProblemManager {
             trainingEntityService.update(trainingUpdateWrapper);
 
             // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
             log.info("[{}],[{}],tid:[{}],pid:[{}],problemId:[{}],operatorUid:[{}],operatorUsername:[{}]",
                     "Admin_Training", "Add_Remote_Problem", tid, problem.getId(), problem.getProblemId(),
                     userRolesVo.getUid(), userRolesVo.getUsername());

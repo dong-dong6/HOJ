@@ -2,8 +2,8 @@ package top.hcode.hoj.controller.oj;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.annotation.AnonApi;
@@ -78,22 +78,22 @@ public class JudgeController {
      * @Return CommonResult
      * @Since 2020/10/30
      */
-    @RequiresAuthentication
-    @RequiresPermissions("submit")
+    @SaCheckLogin
+    @SaCheckPermission("submit")
     @RequestMapping(value = "/submit-problem-judge", method = RequestMethod.POST)
     public CommonResult<Judge> submitProblemJudge(@RequestBody SubmitJudgeDTO judgeDto) {
         return judgeService.submitProblemJudge(judgeDto);
     }
 
-    @RequiresAuthentication
-    @RequiresPermissions("submit")
+    @SaCheckLogin
+    @SaCheckPermission("submit")
     @RequestMapping(value = "/submit-problem-test-judge", method = RequestMethod.POST)
     public CommonResult<String> submitProblemTestJudge(@RequestBody TestJudgeDTO testJudgeDto) {
         return judgeService.submitProblemTestJudge(testJudgeDto);
     }
 
 
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-test-judge-result")
     public CommonResult<TestJudgeVO> getTestJudgeResult(@RequestParam("testJudgeKey") String testJudgeKey) {
         return judgeService.getTestJudgeResult(testJudgeKey);
@@ -105,7 +105,7 @@ public class JudgeController {
      * @Return
      * @Since 2021/2/12
      */
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping(value = "/resubmit")
     public CommonResult<Judge> resubmit(@RequestParam("submitId") Long submitId) {
         return judgeService.resubmit(submitId);
@@ -118,7 +118,7 @@ public class JudgeController {
      * @Since 2021/1/2
      */
     @PutMapping("/submission")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> updateSubmission(@RequestBody Judge judge) {
         return judgeService.updateSubmission(judge);
     }
@@ -143,7 +143,7 @@ public class JudgeController {
      * @Since 2021/6/11
      */
     @RequestMapping(value = "/check-contest-submissions-status", method = RequestMethod.POST)
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<HashMap<Long, Object>> checkContestJudgeResult(@RequestBody SubmitIdListDTO submitIdListDto) {
         return judgeService.checkContestJudgeResult(submitIdListDto);
     }

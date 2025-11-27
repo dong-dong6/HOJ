@@ -7,8 +7,8 @@ import top.hcode.hoj.pojo.vo.AccessVO;
 import top.hcode.hoj.pojo.vo.GroupVO;
 import top.hcode.hoj.service.group.GroupService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,39 +35,39 @@ public class GroupController {
     }
 
     @GetMapping("/get-group-detail")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Group> getGroup(@RequestParam(value = "gid", required = true) Long gid) {
         return groupService.getGroup(gid);
     }
 
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-group-access")
     public CommonResult<AccessVO> getGroupAccess(@RequestParam(value = "gid", required = true) Long gid) {
         return groupService.getGroupAccess(gid);
     }
 
-    @RequiresAuthentication
+    @SaCheckLogin
     @GetMapping("/get-group-auth")
     public CommonResult<Integer> getGroupAuth(@RequestParam(value = "gid", required = true) Long gid) {
         return groupService.getGroupAuth(gid);
     }
 
     @PostMapping("/group")
-    @RequiresAuthentication
-    @RequiresPermissions("group_add")
+    @SaCheckLogin
+    @SaCheckPermission("group_add")
     public CommonResult<Void> addGroup(@RequestBody Group group) {
         return groupService.addGroup(group);
     }
 
     @PutMapping("/group")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> updateGroup(@RequestBody Group group) {
         return groupService.updateGroup(group);
     }
 
     @DeleteMapping("/group")
-    @RequiresAuthentication
-    @RequiresPermissions("group_del")
+    @SaCheckLogin
+    @SaCheckPermission("group_del")
     public CommonResult<Void> deleteGroup(@RequestParam(value = "gid", required = true) Long gid) {
         return groupService.deleteGroup(gid);
     }

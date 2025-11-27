@@ -1,8 +1,8 @@
 package top.hcode.hoj.controller.msg;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.pojo.entity.msg.AdminSysNotice;
@@ -24,8 +24,8 @@ public class AdminNoticeController {
     private AdminNoticeService adminNoticeService;
 
     @GetMapping("/notice")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public CommonResult<IPage<AdminSysNoticeVO>> getSysNotice(@RequestParam(value = "limit", required = false) Integer limit,
                                                               @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                               @RequestParam(value = "type", required = false) String type) {
@@ -34,8 +34,8 @@ public class AdminNoticeController {
     }
 
     @PostMapping("/notice")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public CommonResult<Void> addSysNotice(@RequestBody AdminSysNotice adminSysNotice) {
 
         return adminNoticeService.addSysNotice(adminSysNotice);
@@ -43,8 +43,8 @@ public class AdminNoticeController {
 
 
     @DeleteMapping("/notice")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public CommonResult<Void> deleteSysNotice(@RequestParam("id") Long id) {
 
         return adminNoticeService.deleteSysNotice(id);
@@ -52,8 +52,8 @@ public class AdminNoticeController {
 
 
     @PutMapping("/notice")
-    @RequiresAuthentication
-    @RequiresRoles("root")
+    @SaCheckLogin
+    @SaCheckRole("root")
     public CommonResult<Void> updateSysNotice(@RequestBody AdminSysNotice adminSysNotice) {
 
         return adminNoticeService.updateSysNotice(adminSysNotice);

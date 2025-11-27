@@ -2,7 +2,7 @@ package top.hcode.hoj.controller.oj;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.hcode.hoj.common.result.CommonResult;
@@ -31,7 +31,7 @@ public class ContestAdminController {
      * @Since 2021/1/17
      */
     @GetMapping("/get-contest-ac-info")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<ContestRecord>> getContestACInfo(@RequestParam("cid") Long cid,
                                                                @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                                @RequestParam(value = "limit", required = false) Integer limit) {
@@ -48,7 +48,7 @@ public class ContestAdminController {
      * @Since 2021/1/17
      */
     @PutMapping("/check-contest-ac-info")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> checkContestACInfo(@RequestBody CheckACDTO checkACDto) {
 
         return contestAdminService.checkContestACInfo(checkACDto);
@@ -56,7 +56,7 @@ public class ContestAdminController {
 
 
     @GetMapping("/get-contest-print")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<IPage<ContestPrint>> getContestPrint(@RequestParam("cid") Long cid,
                                                              @RequestParam(value = "currentPage", required = false) Integer currentPage,
                                                              @RequestParam(value = "limit", required = false) Integer limit) {
@@ -73,7 +73,7 @@ public class ContestAdminController {
      * @Since 2021/9/20
      */
     @PutMapping("/check-contest-print-status")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> checkContestPrintStatus(@RequestParam("id") Long id,
                                                       @RequestParam("cid") Long cid) {
 

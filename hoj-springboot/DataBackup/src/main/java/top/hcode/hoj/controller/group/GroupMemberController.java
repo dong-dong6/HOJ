@@ -5,7 +5,7 @@ import top.hcode.hoj.pojo.entity.group.GroupMember;
 import top.hcode.hoj.pojo.vo.GroupMemberVO;
 import top.hcode.hoj.service.group.member.GroupMemberService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @Description:
  */
 @RestController
-@RequiresAuthentication
+@SaCheckLogin
 @RequestMapping("/api/group")
 public class GroupMemberController {
 
@@ -41,7 +41,7 @@ public class GroupMemberController {
     }
 
     @PostMapping("/member")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> addGroupMember(@RequestParam(value = "gid", required = true) Long gid,
                                              @RequestParam(value = "code", required = false) String code,
                                              @RequestParam(value = "reason", required = false) String reason) {
@@ -49,20 +49,20 @@ public class GroupMemberController {
     }
 
     @PutMapping("/member")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> updateMember(@RequestBody GroupMember groupMember) {
         return groupMemberService.updateMember(groupMember);
     }
 
     @DeleteMapping("/member")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> deleteMember(@RequestParam(value = "uid", required = true) String uid,
                                            @RequestParam(value = "gid", required = true) Long gid) {
         return groupMemberService.deleteMember(uid, gid);
     }
 
     @DeleteMapping("/member/exit")
-    @RequiresAuthentication
+    @SaCheckLogin
     public CommonResult<Void> exitGroup(@RequestParam(value = "gid", required = true) Long gid) {
         return groupMemberService.exitGroup(gid);
     }

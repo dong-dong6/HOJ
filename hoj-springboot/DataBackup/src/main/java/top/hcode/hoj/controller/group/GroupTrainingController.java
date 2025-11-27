@@ -9,7 +9,7 @@ import top.hcode.hoj.pojo.vo.TrainingVO;
 import top.hcode.hoj.service.group.training.GroupTrainingProblemService;
 import top.hcode.hoj.service.group.training.GroupTrainingService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ import java.util.HashMap;
  * @Description:
  */
 @RestController
-@RequiresAuthentication
+@SaCheckLogin
 @RequestMapping("/api/group")
 public class GroupTrainingController {
 

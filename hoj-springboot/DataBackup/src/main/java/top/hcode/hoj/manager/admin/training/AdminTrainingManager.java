@@ -1,11 +1,12 @@
 package top.hcode.hoj.manager.admin.training;
+import cn.dev33.satoken.stp.StpUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -85,9 +86,9 @@ public class AdminTrainingManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         // 是否为超级管理员
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         // 只有超级管理员和训练拥有者才能操作
         if (!isRoot && !userRolesVo.getUsername().equals(training.getAuthor())) {
             throw new StatusForbiddenException("对不起，你无权限操作！");
@@ -118,7 +119,7 @@ public class AdminTrainingManager {
             throw new StatusFailException("删除失败！");
         }
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         log.info("[{}],[{}],tid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Training", "Delete", tid, userRolesVo.getUid(), userRolesVo.getUsername());
     }
@@ -153,9 +154,9 @@ public class AdminTrainingManager {
         trainingValidator.validateTraining(training);
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         // 是否为超级管理员
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         // 只有超级管理员和训练拥有者才能操作
         if (!isRoot && !userRolesVo.getUsername().equals(trainingDto.getTraining().getAuthor())) {
             throw new StatusForbiddenException("对不起，你无权限操作！");
@@ -209,9 +210,9 @@ public class AdminTrainingManager {
 
     public void changeTrainingStatus(Long tid, String author, Boolean status) throws StatusForbiddenException, StatusFailException {
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         // 是否为超级管理员
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
+        boolean isRoot = StpUtil.hasRole("root");
         // 只有超级管理员和训练拥有者才能操作
         if (!isRoot && !userRolesVo.getUsername().equals(author)) {
             throw new StatusForbiddenException("对不起，你无权限操作！");

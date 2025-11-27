@@ -5,7 +5,7 @@ import top.hcode.hoj.pojo.entity.common.Announcement;
 import top.hcode.hoj.pojo.vo.AnnouncementVO;
 import top.hcode.hoj.service.group.announcement.GroupAnnouncementService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @Description:
  */
 @RestController
-@RequiresAuthentication
+@SaCheckLogin
 @RequestMapping("/api/group")
 public class GroupAnnouncementController {
 

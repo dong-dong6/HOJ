@@ -7,7 +7,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -129,7 +129,7 @@ public class AccountManager {
      */
     public UserHomeVO getUserHomeInfo(String uid, String username) throws StatusFailException {
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         // 如果没有uid和username，默认查询当前登录用户的
         if (StringUtils.isEmpty(uid) && StringUtils.isEmpty(username)) {
@@ -193,7 +193,7 @@ public class AccountManager {
      * @Description 获取用户最近一年的提交热力图数据
      */
     public UserCalendarHeatmapVO getUserCalendarHeatmap(String uid, String username) throws StatusFailException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         if (StringUtils.isEmpty(uid) && StringUtils.isEmpty(username)) {
             if (userRolesVo != null) {
                 uid = userRolesVo.getUid();
@@ -244,7 +244,7 @@ public class AccountManager {
             throw new StatusFailException("新密码长度应该为6~20位！");
         }
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         // 如果已经被锁定半小时，则不能修改
         String lockKey = Constants.Account.CODE_CHANGE_PASSWORD_LOCK + userRolesVo.getUid();
@@ -311,7 +311,7 @@ public class AccountManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         QueryWrapper<UserInfo> emailUserInfoQueryWrapper = new QueryWrapper<>();
         emailUserInfoQueryWrapper.select("uuid", "email")
@@ -354,7 +354,7 @@ public class AccountManager {
         }
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         // 如果已经被锁定半小时不能修改
         String lockKey = Constants.Account.CODE_CHANGE_EMAIL_LOCK + userRolesVo.getUid();
         // 统计失败的key
@@ -477,7 +477,7 @@ public class AccountManager {
         commonValidator.validateContentLength(userInfoVo.getCfUsername(), "Codeforces用户名", 255);
 
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
 
         UpdateWrapper<UserInfo> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("uuid", userRolesVo.getUid())
@@ -509,7 +509,7 @@ public class AccountManager {
 
     public UserAuthInfoVO getUserAuthInfo(){
         // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         //获取该用户角色所有的权限
         List<Role> roles = userRoleEntityService.getRolesByUid(userRolesVo.getUid());
         UserAuthInfoVO authInfoVO = new UserAuthInfoVO();

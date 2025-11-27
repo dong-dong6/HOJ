@@ -2,7 +2,7 @@ package top.hcode.hoj.manager.admin.system;
 
 import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hcode.hoj.dao.contest.ContestEntityService;
@@ -37,7 +37,7 @@ public class DashboardManager {
 
     public Session getRecentSession() {
         // 需要获取一下该token对应用户的数据
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        AccountProfile userRolesVo = AccountUtils.getProfile();
         QueryWrapper<Session> wrapper = new QueryWrapper<Session>().eq("uid", userRolesVo.getUid()).orderByDesc("gmt_create");
         List<Session> sessionList = sessionEntityService.list(wrapper);
         if (sessionList.size() > 1) {

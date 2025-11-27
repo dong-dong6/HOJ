@@ -3,7 +3,7 @@ package top.hcode.hoj.dao.group.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.shiro.SecurityUtils;
+import top.hcode.hoj.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.hcode.hoj.dao.group.GroupTrainingEntityService;
@@ -42,7 +42,7 @@ public class GroupTrainingEntityServiceImpl extends ServiceImpl<GroupTrainingMap
         // 当前用户有登录，且训练列表不为空，则查询用户对于每个训练的做题进度
         if (trainingList.size() > 0) {
 
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+            AccountProfile userRolesVo = AccountUtils.getProfile();
 
             List<Long> tidList = trainingList.stream().map(TrainingVO::getId).collect(Collectors.toList());
             List<TrainingProblem> trainingProblemList = trainingProblemEntityService.getGroupTrainingListAcceptedCountByUid(tidList, gid, userRolesVo.getUid());
