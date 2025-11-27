@@ -50,6 +50,24 @@ libreoj-password-list:
 # 是否强制用配置更新覆盖remote judge的账号
 forced-update-remote-judge-account: false
 
+# OAuth2 第三方登录配置
+oauth-enabled: false
+# GitHub OAuth
+oauth-github-enabled: false
+oauth-github-client-id: ""
+oauth-github-client-secret: ""
+oauth-github-redirect-uri: ""
+# Gitee OAuth
+oauth-gitee-enabled: false
+oauth-gitee-client-id: ""
+oauth-gitee-client-secret: ""
+oauth-gitee-redirect-uri: ""
+# GitLab OAuth
+oauth-gitlab-enabled: false
+oauth-gitlab-client-id: ""
+oauth-gitlab-client-secret: ""
+oauth-gitlab-redirect-uri: ""
+
 server:
   port: 6688
   servlet:
@@ -126,6 +144,43 @@ sa-token:
   is-read-header: true
   # 是否从 cookie 里读取 token
   is-read-cookie: false
+
+# HOJ OAuth2 第三方登录配置
+hoj:
+  oauth:
+    enabled: ${oauth-enabled}
+    github:
+      enabled: ${oauth-github-enabled}
+      client-id: ${oauth-github-client-id}
+      client-secret: ${oauth-github-client-secret}
+      redirect-uri: ${oauth-github-redirect-uri}
+    gitee:
+      enabled: ${oauth-gitee-enabled}
+      client-id: ${oauth-gitee-client-id}
+      client-secret: ${oauth-gitee-client-secret}
+      redirect-uri: ${oauth-gitee-redirect-uri}
+    gitlab:
+      enabled: ${oauth-gitlab-enabled}
+      client-id: ${oauth-gitlab-client-id}
+      client-secret: ${oauth-gitlab-client-secret}
+      redirect-uri: ${oauth-gitlab-redirect-uri}
+    # 自定义OAuth配置示例
+    # customs:
+    #   myoauth:
+    #     enabled: true
+    #     name: "我的OAuth"
+    #     client-id: your-client-id
+    #     client-secret: your-client-secret
+    #     redirect-uri: http://localhost:8080/api/oauth/callback/myoauth
+    #     authorize-url: https://your-oauth-server/oauth/authorize
+    #     access-token-url: https://your-oauth-server/oauth/token
+    #     user-info-url: https://your-oauth-server/api/user
+    #     scope: openid profile email
+    #     user-id-field: id
+    #     username-field: username
+    #     nickname-field: name
+    #     avatar-field: avatar
+    #     email-field: email
 
 logging:
   level:

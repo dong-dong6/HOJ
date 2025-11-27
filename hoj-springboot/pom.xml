@@ -142,6 +142,12 @@
                 <artifactId>oshi-core</artifactId>
                 <version>${oshi.version}</version>
             </dependency>
+            <!-- JustAuth 第三方登录 -->
+            <dependency>
+                <groupId>me.zhyd.oauth</groupId>
+                <artifactId>JustAuth</artifactId>
+                <version>1.16.6</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

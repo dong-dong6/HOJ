@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.hcode.hoj.mapper.UserThirdAuthMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, uid, platform, open_id, username, nickname, avatar, email, 
+        raw_user_info, access_token, refresh_token, expire_in, gmt_create, gmt_modified
+    </sql>
+
+    <!-- 根据平台和openId查询绑定信息 -->
+    <select id="selectByPlatformAndOpenId" resultType="top.hcode.hoj.pojo.entity.user.UserThirdAuth">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user_third_auth
+        WHERE platform = #{platform} AND open_id = #{openId}
+        LIMIT 1
+    </select>
+
+    <!-- 根据用户ID和平台查询绑定信息 -->
+    <select id="selectByUidAndPlatform" resultType="top.hcode.hoj.pojo.entity.user.UserThirdAuth">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user_third_auth
+        WHERE uid = #{uid} AND platform = #{platform}
+        LIMIT 1
+    </select>
+
+</mapper>
